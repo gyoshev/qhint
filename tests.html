@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <link rel="stylesheet" href="qunit/qunit/qunit.css" media="screen" />
+    <script src="qunit/qunit/qunit.js"></script>
+    <script src="jshint/jshint.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            module("Regular tests");
+
+            test("sample", function() {
+                ok( true, "all pass" );
+            });
+
+            module("jsHint tests");
+
+            function jsHintTest(name, sourceFile, options) {
+                function validateFile(source) {
+                    var i, len, err,
+                        result = JSHINT(source, options);
+
+                    ok(result);
+
+                    if (result) {
+                        return;
+                    }
+
+                    for (i = 0, len = JSHINT.errors.length; i < len; i++) {
+                        err = JSHINT.errors[i];
+                        if (!err) {
+                            continue;
+                        }
+
+                        ok(false, err.reason
+                            + " on line " + err.line
+                            + ", character " + err.character);
+                    }
+                }
+
+                return asyncTest(name, function() {	
+                    $.ajax({
+                        url: sourceFile,
+                        success: function(source) {
+                            start();
+                            validateFile(source);
+                        }
+                    });
+                });
+            }
+
+            jsHintTest("File that adheres to style guidelines", "pass.js");
+            
+            jsHintTest("File without any style", "fail.js");
+        });
+    </script>
+</head>
+<body>
+    <h1 id="qunit-header">QUnit and jsHint example</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>
+
