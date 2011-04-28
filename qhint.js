@@ -9,20 +9,21 @@
         req.onreadystatechange = function () {
             if (req.readyState != 4) return;
             if (req.status != 200 && req.status != 304) {
-                alert("HTTP error " + req.status + " occured.")
+                alert("HTTP error " + req.status + " occured.");
                 return;
             }
             callback(req);
-        }
+        };
+
         if (req.readyState == 4) return;
         req.send();
     }
 
     var XMLHttpFactories = [
-        function () {return new XMLHttpRequest()},
-        function () {return new ActiveXObject("Msxml2.XMLHTTP")},
-        function () {return new ActiveXObject("Msxml3.XMLHTTP")},
-        function () {return new ActiveXObject("Microsoft.XMLHTTP")}
+        function () { return new XMLHttpRequest(); },
+        function () { return new ActiveXObject("Msxml2.XMLHTTP"); },
+        function () { return new ActiveXObject("Msxml3.XMLHTTP"); },
+        function () { return new ActiveXObject("Microsoft.XMLHTTP"); }
     ];
 
     function createXMLHTTPObject() {
@@ -62,5 +63,5 @@
                 validateFile(source.responseText);
             });
         });
-    }
+    };
 })();
