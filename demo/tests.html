@@ -9,25 +9,29 @@
     <script src="../qhint.js"></script>
 
     <script>
-        $(document).ready(function(){
-            module("Regular tests");
+        module("Regular tests");
 
-            test("sample", function() {
-                ok( true, "all pass" );
-            });
+        test("sample", function() {
+            ok(true, "all pass");
+        });
 
-            module("jsHint tests");
+        module("jsHint tests");
 
-            jsHintTest("File that adheres to style guidelines", "pass.js");
-            
-            jsHintTest("File without any style", "fail.js");
-            
-            jsHintTest("File without any style, but with options overridden", "fail.js", {
-                debug: true,
-                asi: true,
-                sub: true,
-                evil: true
-            });
+        /* test file with default options */
+        jsHintTest("pass.js");
+        
+        /* show test name instead of filename */
+        jsHintTest("File that adheres to style guidelines", "pass.js");
+        
+        /* this file will fail */
+        jsHintTest("File without any style", "fail.js");
+        
+        /* pass options to make the test pass */
+        jsHintTest("File without any style, but with options overridden", "fail.js", {
+            debug: true,
+            asi: true,
+            sub: true,
+            evil: true
         });
     </script>
 </head>

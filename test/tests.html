@@ -9,6 +9,33 @@
     <script src="../qhint.js"></script>
 
     <script>
+        (function() {
+            var oldAsyncTest, oldJsHint, oldSendRequest;
+
+            module("Functionality", {
+                setup: function() {
+                    oldAsyncTest = asyncTest;
+                },
+                teardown: function() {
+                    asyncTest = oldAsyncTest;
+                }
+            });
+        })();
+
+        test("calls with one parameter uses it as test name", function() {
+            var args;
+
+            asyncTest = function() {
+                args = arguments;
+            };
+
+            jsHintTest("foo.js");
+
+            equals(args[0], "foo.js");
+        });
+
+        module("Style");
+
         jsHintTest("qHint", "../qhint.js");
     </script>
 </head>

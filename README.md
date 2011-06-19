@@ -8,5 +8,9 @@ This small script lets you integrate jsHint coding style validation into your qU
 
 2. Call the `jsHintTest` function like this:
 
+    `jsHintTest(*file* [, *options*]);`
+
+   Optionally, you can name the test:
+
     `jsHintTest(*name*, *file* [, *options*]);`
  
