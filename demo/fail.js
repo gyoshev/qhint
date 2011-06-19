@@ -3,6 +3,8 @@ function f(foo) {
     var str
     a = 4;
 
+    eval("a = 5");
+
     a["toString"]();
 
     for (i = 0; i < 4; i++) {
