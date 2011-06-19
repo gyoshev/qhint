@@ -36,7 +36,7 @@
     }
 
     // the jsHintTest function
-    window.jsHintTest = function (name, sourceFile, options) {
+    window.jsHintTest = window.qHint = function (name, sourceFile, options) {
         function validateFile(source) {
             var i, len, err,
                 result = JSHINT(source, options);
