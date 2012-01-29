@@ -9,45 +9,41 @@
     <script src="../qhint.js"></script>
 
     <script>
-        var jsHintArgs, asyncTestArgs;
+        var oldAsyncTest = asyncTest,
+            oldJsHint = JSHINT,
+            jsHintArgs, asyncTestArgs,
+            responseText;
 
-        (function() {
-            var oldAsyncTest, oldJsHint, oldSendRequest;
+        module("Functionality", {
+            setup: function() {
+                jsHintArgs = [];
+                asyncTestArgs = [];
 
-            module("Functionality", {
-                setup: function() {
-                    oldAsyncTest = asyncTest;
-                    oldJsHint = JSHINT;
+                JSHINT = function() {
+                    jsHintArgs = arguments;
 
-                    jsHintArgs = [];
-                    asyncTestArgs = [];
+                    return true;
+                };
 
-                    JSHINT = function() {
-                        jsHintArgs = arguments;
+                asyncTest = function(name, f) {
+                    asyncTestArgs = arguments;
+                    f();
+                };
 
-                        return true;
-                    };
-
-                    asyncTest = function(name, f) {
-                        asyncTestArgs = arguments;
-                        f();
-                    };
-
-                    qHint.sendRequest = function(url, callback) {
-                        callback({
-                            status: 200,
-                            sourceFile: url,
-                            responseText: "var a = 1;"
-                        });
-                    };
-                },
-                teardown: function() {
-                    asyncTest = oldAsyncTest;
-                    JSHINT = oldJsHint;
-
-                }
-            });
-        })();
+                qHint.sendRequest = function(url, callback) {
+                    callback({
+                        status: 200,
+                        sourceFile: url,
+                        responseText: responseText || "var a = 1;"
+                    });
+                };
+            },
+            teardown: function() {
+                asyncTest = oldAsyncTest;
+                JSHINT = oldJsHint;
+                responseText = "";
+            }
+        });
 
         test("calls with one parameter uses it as test name", function() {
             jsHintTest("foo.js");
@@ -63,6 +59,22 @@
             jsHintTest("foo.js", options);
 
             same(jsHintArgs[1], options);
+        });
+
+        test("calls ok(false) for each validation error", function() {
+            var oldOk = ok,
+                okArgs;
+
+            ok = function() {
+                okArgs = arguments;
+            };
+            JSHINT = oldJsHint;
+
+            qHint.validateFile("foo = 1;", { undef: true });
+
+            ok = oldOk;
+
+            equal(okArgs[0], false);
         });
 
         module("Style");
