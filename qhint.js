@@ -1,35 +1,41 @@
 (function() {
+    function validateFile(source, options) {
+        var i, len, err,
+            result = JSHINT(source, options);
+
+        ok(result);
+
+        if (result) {
+            return;
+        }
+
+        for (i = 0, len = JSHINT.errors.length; i < len; i++) {
+            err = JSHINT.errors[i];
+            if (!err) {
+                continue;
+            }
+
+            ok(false, err.reason + " on line " + err.line + ", character " + err.character);
+        }
+    }
+
     function qHint(name, sourceFile, options) {
         if (sourceFile === undefined || typeof(sourceFile) == "object") {
             // jsHintTest('file.js', [options])
             options = sourceFile;
             sourceFile = name;
         }
-        
-        function validateFile(source) {
-            var i, len, err,
-                result = JSHINT(source, options);
 
-            ok(result);
-
-            if (result) {
-                return;
-            }
-
-            for (i = 0, len = JSHINT.errors.length; i < len; i++) {
-                err = JSHINT.errors[i];
-                if (!err) {
-                    continue;
-                }
-
-                ok(false, err.reason + " on line " + err.line + ", character " + err.character);
-            }
-        }
-
-        return asyncTest(name, function() {	
-            qHint.sendRequest(sourceFile, function(source) {
+        return asyncTest(name, function() {
+            qHint.sendRequest(sourceFile, function(req) {
                 start();
-                validateFile(source.responseText);
+
+                if (req.status == 200) {
+                    validateFile(req.responseText, options);
+                } else {
+                    ok(false, "HTTP error " + req.status +
+                              " while fetching " + sourceFile);
+                }
             });
         });
     }
@@ -41,13 +47,9 @@
         if (!req) return;
         var method = "GET";
         req.open(method,url,true);
-        req.setRequestHeader('User-Agent','XMLHTTP/1.0');
         req.onreadystatechange = function () {
             if (req.readyState != 4) return;
-            if (req.status != 200 && req.status != 304) {
-                alert("HTTP error " + req.status + " occured.");
-                return;
-            }
+
             callback(req);
         };
 

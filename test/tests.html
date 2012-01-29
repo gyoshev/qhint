@@ -9,34 +9,65 @@
     <script src="../qhint.js"></script>
 
     <script>
+        var jsHintArgs, asyncTestArgs;
+
         (function() {
             var oldAsyncTest, oldJsHint, oldSendRequest;
 
             module("Functionality", {
                 setup: function() {
                     oldAsyncTest = asyncTest;
+                    oldJsHint = JSHINT;
+
+                    jsHintArgs = [];
+                    asyncTestArgs = [];
+
+                    JSHINT = function() {
+                        jsHintArgs = arguments;
+
+                        return true;
+                    };
+
+                    asyncTest = function(name, f) {
+                        asyncTestArgs = arguments;
+                        f();
+                    };
+
+                    qHint.sendRequest = function(url, callback) {
+                        callback({
+                            status: 200,
+                            sourceFile: url,
+                            responseText: "var a = 1;"
+                        });
+                    };
                 },
                 teardown: function() {
                     asyncTest = oldAsyncTest;
+                    JSHINT = oldJsHint;
+
                 }
             });
         })();
 
         test("calls with one parameter uses it as test name", function() {
-            var args;
-
-            asyncTest = function() {
-                args = arguments;
-            };
-
             jsHintTest("foo.js");
 
-            equals(args[0], "foo.js");
+            equal(asyncTestArgs[0], "foo.js");
+        });
+
+        test("passes options to jsHint", function() {
+            var options = {
+                    eqeqeq: false
+                };
+
+            jsHintTest("foo.js", options);
+
+            same(jsHintArgs[1], options);
         });
 
         module("Style");
 
-        jsHintTest("qHint", "../qhint.js");
+        jsHintTest("qHinting qHint", "../qhint.js");
     </script>
 </head>
 <body>
