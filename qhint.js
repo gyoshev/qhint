@@ -27,9 +27,8 @@
         var i, len, err,
             result = JSHINT(source, options);
 
-        ok(result);
-
         if (result) {
+            ok(true);
             return;
         }
 

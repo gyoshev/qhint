@@ -10,6 +10,7 @@
 
     <script>
         var oldAsyncTest = asyncTest,
+            oldSendRequest = qHint.sendRequest,
             oldJsHint = JSHINT,
             jsHintArgs, asyncTestArgs,
             responseText;
@@ -41,6 +42,7 @@
             teardown: function() {
                 asyncTest = oldAsyncTest;
                 JSHINT = oldJsHint;
+                qHint.sendRequest = oldSendRequest;
                 responseText = "";
             }
         });
@@ -61,7 +63,7 @@
             same(jsHintArgs[1], options);
         });
 
-        test("calls ok(false) for each validation error", function() {
+        test("calls ok(false) for one validation error", function() {
             var oldOk = ok,
                 okArgs;
 
@@ -77,9 +79,27 @@
             equal(okArgs[0], false);
         });
 
+        test("calls ok(false) for each validation error", function() {
+            var oldOk = ok,
+                calls = 0;
+
+            ok = function(status) {
+                oldOk(!status);
+                calls++;
+            };
+
+            JSHINT = oldJsHint;
+
+            qHint.validateFile("foo = 1; bar = 2;", { undef: true });
+
+            ok = oldOk;
+
+            equal(calls, 2);
+        });
+
         module("Style");
 
-        jsHintTest("qHinting qHint", "../qhint.js");
+        qHint("qHinting qHint", "../qhint.js");
     </script>
 </head>
 <body>
