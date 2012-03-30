@@ -26,6 +26,10 @@
                     return true;
                 };
 
+                JSHINT.data = function() {
+                    return {};
+                };
+
                 asyncTest = function(name, f) {
                     asyncTestArgs = arguments;
                     f();
@@ -84,7 +88,7 @@
                 calls = 0;
 
             ok = function(status) {
-                oldOk(!status);
+                oldOk(!status, "must report error");
                 calls++;
             };
 
@@ -94,12 +98,37 @@
 
             ok = oldOk;
 
-            equal(calls, 2);
+            equal(calls, 2, "calls ok() twice");
+        });
+
+        test("reports unused variables when called with `unused`", function() {
+            var oldOk = ok,
+                calls = 0;
+
+            ok = function(status) {
+                oldOk(!status, "must report error");
+                calls++;
+            };
+
+            JSHINT = oldJsHint;
+
+            qHint.validateFile("function a() { var foo = 1, bar = 2; bar++; }", { unused: true });
+
+            ok = oldOk;
+
+            equal(calls, 1, "calls ok once");
         });
 
         module("Style");
 
-        qHint("qHinting qHint", "../qhint.js");
+        qHint("qHinting qHint", "../qhint.js", {
+            curly: true,
+            trailing: true,
+            latedef: true,
+            unused: true,
+            browser: true,
+            jquery: true
+        });
     </script>
 </head>
 <body>

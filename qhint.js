@@ -25,9 +25,21 @@
 
     qHint.validateFile = function (source, options) {
         var i, len, err,
-            result = JSHINT(source, options);
+            result,
+            showUnused, unused, unvar;
 
-        if (result) {
+        if (options && options.unused) {
+            showUnused = true;
+            delete options.unused;
+        }
+
+        result = JSHINT(source, options);
+
+        if (showUnused) {
+            unused = JSHINT.data().unused;
+        }
+
+        if (result && !unused) {
             ok(true);
             return;
         }
@@ -41,6 +53,14 @@
             ok(false, err.reason +
                 " on line " + err.line +
                 ", character " + err.character);
+        }
+
+        if (unused) {
+            for (i = 0, len = unused.length; i < len; i++) {
+                unvar = unused[i];
+                ok(false, "unused variable " + unvar.name +
+                          " on line " + unvar.line);
+            }
         }
     };
 
@@ -65,16 +85,23 @@
     // attached to qHint to allow substitution / mocking
     qHint.sendRequest = function (url, callback) {
         var req = createXMLHTTPObject();
-        if (!req) return;
+        if (!req) {
+            return;
+        }
+
         var method = "GET";
         req.open(method,url,true);
         req.onreadystatechange = function () {
-            if (req.readyState != 4) return;
+            if (req.readyState != 4) {
+                return;
+            }
 
             callback(req);
         };
 
-        if (req.readyState == 4) return;
+        if (req.readyState == 4) {
+            return;
+        }
         req.send();
     };
 })();
