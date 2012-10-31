@@ -2,9 +2,10 @@
     var qHint =
         window.jsHintTest =
         window.qHint =
-            function qHint(name, sourceFile, options) {
+            function qHint(name, sourceFile, options, globals) {
                 if (sourceFile === undefined || typeof(sourceFile) == "object") {
                     // jsHintTest('file.js', [options])
+                    globals = options;
                     options = sourceFile;
                     sourceFile = name;
                 }
@@ -14,7 +15,7 @@
                         start();
 
                         if (req.status == 200) {
-                            qHint.validateFile(req.responseText, options);
+                            qHint.validateFile(req.responseText, options, globals);
                         } else {
                             ok(false, "HTTP error " + req.status +
                                       " while fetching " + sourceFile);
@@ -23,7 +24,7 @@
                 });
             };
 
-    qHint.validateFile = function (source, options) {
+    qHint.validateFile = function (source, options, globals) {
         var i, len, err,
             result,
             showUnused, unused, unvar;
@@ -33,7 +34,7 @@
             delete options.unused;
         }
 
-        result = JSHINT(source, options);
+        result = JSHINT(source, options, globals);
 
         if (showUnused) {
             unused = JSHINT.data().unused;

@@ -67,6 +67,16 @@
             same(jsHintArgs[1], options);
         });
 
+        test("passes globals to jsHint", function() {
+            var globals = {
+                    ok: false
+                };
+
+            jsHintTest("foo.js", {}, globals);
+
+            same(jsHintArgs[2], globals);
+        });
+
         test("calls ok(false) for one validation error", function() {
             var oldOk = ok,
                 okArgs;
