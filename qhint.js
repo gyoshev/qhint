@@ -1,3 +1,4 @@
+/*! qHint 1.0 | http://gyoshev.mit-license.org */
 (function() {
     var qHint =
         window.jsHintTest =
