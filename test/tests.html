@@ -129,6 +129,38 @@
             equal(calls, 1, "calls ok once");
         });
 
+        test("reports each unused variable separately", function() {
+            var oldOk = ok,
+                calls = 0;
+
+            ok = function(status) {
+                oldOk(!status, "must report error");
+                calls++;
+            };
+
+            JSHINT = oldJsHint;
+
+            qHint.validateFile("function a() { var foo = 1, bar = 2, baz = 3; bar++; }", { unused: true });
+
+            ok = oldOk;
+
+            equal(calls, 2, "calls ok for each variable");
+        });
+
+        test("validation does not change options object", function() {
+            var oldOk = ok;
+            var options = { unused: true };
+
+            ok = function(status) {};
+            JSHINT = oldJsHint;
+
+            qHint.validateFile("function a() { var foo = 1, bar = 2, baz = 3; bar++; }", options);
+
+            ok = oldOk;
+
+            ok(options.unused);
+        });
+
         module("Style");
 
         qHint("qHinting qHint", "../qhint.js", {

@@ -1,4 +1,4 @@
-/*! qHint 1.0 | http://gyoshev.mit-license.org */
+/*! qHint 1.1 | http://gyoshev.mit-license.org */
 (function() {
     var qHint =
         window.jsHintTest =
@@ -25,10 +25,26 @@
                 });
             };
 
+    function clone(obj) {
+        var result = {};
+
+        if (obj === null || typeof (obj) != 'object') {
+            return obj;
+        }
+
+        for (var key in obj) {
+            result[key] = clone(obj[key]);
+        }
+
+        return result;
+    }
+
     qHint.validateFile = function (source, options, globals) {
         var i, len, err,
             result,
             showUnused, unused, unvar;
+
+        options = clone(options);
 
         if (options && options.unused) {
             showUnused = true;
