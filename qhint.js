@@ -25,39 +25,10 @@
                 });
             };
 
-    function clone(obj) {
-        var result = {};
-
-        if (obj === null || typeof (obj) != 'object') {
-            return obj;
-        }
-
-        for (var key in obj) {
-            result[key] = clone(obj[key]);
-        }
-
-        return result;
-    }
-
     qHint.validateFile = function (source, options, globals) {
-        var i, len, err,
-            result,
-            showUnused, unused, unvar;
+        var i, len, err;
 
-        options = clone(options);
-
-        if (options && options.unused) {
-            showUnused = true;
-            delete options.unused;
-        }
-
-        result = JSHINT(source, options, globals);
-
-        if (showUnused) {
-            unused = JSHINT.data().unused;
-        }
-
-        if (result && !unused) {
+        if (JSHINT(source, options, globals)) {
             ok(true);
             return;
         }
@@ -71,14 +42,6 @@
             ok(false, err.reason +
                 " on line " + err.line +
                 ", character " + err.character);
-        }
-
-        if (unused) {
-            for (i = 0, len = unused.length; i < len; i++) {
-                unvar = unused[i];
-                ok(false, "unused variable " + unvar.name +
-                          " on line " + unvar.line);
-            }
         }
     };
 
