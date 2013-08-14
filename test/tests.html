@@ -5,11 +5,12 @@
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <link rel="stylesheet" href="../qunit/qunit/qunit.css" media="screen" />
     <script src="../qunit/qunit/qunit.js"></script>
-    <script src="../jshint-1.0.0.js"></script>
+    <script src="../jshint-2.1.9.js"></script>
     <script src="../qhint.js"></script>
 
     <script>
         var oldAsyncTest = asyncTest,
+            oldStart = start,
             oldSendRequest = qHint.sendRequest,
             oldJsHint = JSHINT,
             jsHintArgs, asyncTestArgs,
@@ -17,6 +18,8 @@
 
         module("Functionality", {
             setup: function() {
+                // stub qUnit functions in order to test how they are called
+
                 jsHintArgs = [];
                 asyncTestArgs = [];
 
@@ -35,6 +38,8 @@
                     f();
                 };
 
+                start = function() {};
+
                 qHint.sendRequest = function(url, callback) {
                     callback({
                         status: 200,
@@ -45,6 +50,7 @@
             },
             teardown: function() {
                 asyncTest = oldAsyncTest;
+                start = oldStart;
                 JSHINT = oldJsHint;
                 qHint.sendRequest = oldSendRequest;
                 responseText = "";
@@ -64,7 +70,7 @@
 
             jsHintTest("foo.js", options);
 
-            same(jsHintArgs[1], options);
+            deepEqual(jsHintArgs[1], options);
         });
 
         test("passes globals to jsHint", function() {
@@ -74,7 +80,7 @@
 
             jsHintTest("foo.js", {}, globals);
 
-            same(jsHintArgs[2], globals);
+            deepEqual(jsHintArgs[2], globals);
         });
 
         test("calls ok(false) for one validation error", function() {
