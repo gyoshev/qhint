@@ -15,7 +15,7 @@
                     qHint.sendRequest(sourceFile, function(req) {
                         start();
 
-                        if (req.status == 200 || req.status == 0) {
+                        if (req.status == 200 || req.status === 0) {
                             qHint.validateFile(req.responseText, options, globals);
                         } else {
                             ok(false, "HTTP error " + req.status +
