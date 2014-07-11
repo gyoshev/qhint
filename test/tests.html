@@ -57,53 +57,53 @@
             }
         });
 
-        test("calls with one parameter uses it as test name", function() {
+        test("calls with one parameter uses it as test name", function(assert) {
             jsHintTest("foo.js");
 
-            equal(asyncTestArgs[0], "foo.js");
+            assert.equal(asyncTestArgs[0], "foo.js");
         });
 
-        test("passes options to jsHint", function() {
+        test("passes options to jsHint", function(assert) {
             var options = {
                     eqeqeq: false
                 };
 
             jsHintTest("foo.js", options);
 
-            deepEqual(jsHintArgs[1], options);
+            assert.deepEqual(jsHintArgs[1], options);
         });
 
-        test("passes globals to jsHint", function() {
+        test("passes globals to jsHint", function(assert) {
             var globals = {
                     ok: false
                 };
 
             jsHintTest("foo.js", {}, globals);
 
-            deepEqual(jsHintArgs[2], globals);
+            assert.deepEqual(jsHintArgs[2], globals);
         });
 
-        test("calls ok(false) for one validation error", function() {
-            var oldOk = ok,
+        test("calls ok(false) for one validation error", function(assert) {
+            var oldOk = assert.ok,
                 okArgs;
 
-            ok = function() {
+            assert.ok = function() {
                 okArgs = arguments;
             };
             JSHINT = oldJsHint;
 
             qHint.validateFile("foo = 1;", { undef: true });
 
-            ok = oldOk;
+            assert.ok = oldOk;
 
             equal(okArgs[0], false);
         });
 
-        test("calls ok(false) for each validation error", function() {
-            var oldOk = ok,
+        test("calls ok(false) for each validation error", function(assert) {
+            var oldOk = assert.ok,
                 calls = 0;
 
-            ok = function(status) {
+            assert.ok = function(status) {
                 oldOk(!status, "must report error");
                 calls++;
             };
@@ -112,16 +112,16 @@
 
             qHint.validateFile("foo = 1; bar = 2;", { undef: true });
 
-            ok = oldOk;
+            assert.ok = oldOk;
 
             equal(calls, 2, "calls ok() twice");
         });
 
-        test("reports unused variables when called with `unused`", function() {
-            var oldOk = ok,
+        test("reports unused variables when called with `unused`", function(assert) {
+            var oldOk = assert.ok,
                 calls = 0;
 
-            ok = function(status) {
+            assert.ok = function(status) {
                 oldOk(!status, "must report error");
                 calls++;
             };
@@ -130,16 +130,16 @@
 
             qHint.validateFile("(function () { var foo = 1, bar = 2; bar++; })();", { unused: true });
 
-            ok = oldOk;
+            assert.ok = oldOk;
 
             equal(calls, 1, "calls ok once");
         });
 
-        test("reports each unused variable separately", function() {
-            var oldOk = ok,
+        test("reports each unused variable separately", function(assert) {
+            var oldOk = assert.ok,
                 calls = 0;
 
-            ok = function(status) {
+            assert.ok = function(status) {
                 oldOk(!status, "must report error");
                 calls++;
             };
@@ -148,23 +148,23 @@
 
             qHint.validateFile("(function () { var foo = 1, bar = 2, baz = 3; bar++; })();", { unused: true });
 
-            ok = oldOk;
+            assert.ok = oldOk;
 
             equal(calls, 2, "calls ok for each variable");
         });
 
-        test("validation does not change options object", function() {
-            var oldOk = ok;
+        test("validation does not change options object", function(assert) {
+            var oldOk = assert.ok;
             var options = { unused: true };
 
-            ok = function(status) {};
+            assert.ok = function(status) {};
             JSHINT = oldJsHint;
 
             qHint.validateFile("function a() { var foo = 1, bar = 2, baz = 3; bar++; }", options);
 
-            ok = oldOk;
+            assert.ok = oldOk;
 
-            ok(options.unused);
+            assert.ok(options.unused);
         });
 
         module("Style");

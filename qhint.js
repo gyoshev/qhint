@@ -11,14 +11,14 @@
                     sourceFile = name;
                 }
 
-                return asyncTest(name, function() {
+                return asyncTest(name, function(assert) {
                     qHint.sendRequest(sourceFile, function(req) {
                         start();
 
                         if (req.status == 200 || req.status === 0) {
                             qHint.validateFile(req.responseText, options, globals);
                         } else {
-                            ok(false, "HTTP error " + req.status +
+                            assert.ok(false, "HTTP error " + req.status +
                                       " while fetching " + sourceFile);
                         }
                     });
@@ -29,7 +29,7 @@
         var i, len, err;
 
         if (JSHINT(source, options, globals)) {
-            ok(true);
+            QUnit.assert.ok(true);
             return;
         }
 
@@ -39,7 +39,7 @@
                 continue;
             }
 
-            ok(false, err.reason +
+            QUnit.assert.ok(false, err.reason +
                 " on line " + err.line +
                 ", character " + err.character);
         }
