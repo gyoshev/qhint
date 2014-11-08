@@ -1,9 +1,6 @@
-/*! qHint 1.1 | http://gyoshev.mit-license.org */
+/*! qHint 1.2 | http://gyoshev.mit-license.org */
 (function() {
-    var qHint =
-        window.jsHintTest =
-        window.qHint =
-            function qHint(name, sourceFile, options, globals) {
+    var qHint = function qHint(name, sourceFile, options, globals) {
                 if (sourceFile === undefined || typeof(sourceFile) == "object") {
                     // jsHintTest('file.js', [options])
                     globals = options;
@@ -11,35 +8,45 @@
                     sourceFile = name;
                 }
 
-                return asyncTest(name, function(assert) {
-                    qHint.sendRequest(sourceFile, function(req) {
+                return asyncTest(name, function() {
+                    qHint.fetch(sourceFile, function(req) {
                         start();
 
                         if (req.status == 200 || req.status === 0) {
                             qHint.validateFile(req.responseText, options, globals);
                         } else {
-                            assert.ok(false, "HTTP error " + req.status +
+                            qHint.fail.call("HTTP error " + req.status +
                                       " while fetching " + sourceFile);
                         }
                     });
                 });
             };
 
-    qHint.validateFile = function (source, options, globals) {
+    qHint.fail = function(message) {
+        QUnit.config.current.assert.ok(false, message);
+    };
+
+    qHint.success = function() {
+        QUnit.config.current.assert.ok(true);
+    };
+
+    qHint.jsHint = JSHINT;
+
+    qHint.validateFile = function(source, options, globals) {
         var i, len, err;
 
-        if (JSHINT(source, options, globals)) {
-            QUnit.assert.ok(true);
+        if (qHint.jsHint(source, options, globals)) {
+            qHint.success();
             return;
         }
 
-        for (i = 0, len = JSHINT.errors.length; i < len; i++) {
-            err = JSHINT.errors[i];
+        for (i = 0, len = qHint.jsHint.errors.length; i < len; i++) {
+            err = qHint.jsHint.errors[i];
             if (!err) {
                 continue;
             }
 
-            QUnit.assert.ok(false, err.reason +
+            qHint.fail(err.reason +
                 " on line " + err.line +
                 ", character " + err.character);
         }
@@ -64,7 +71,7 @@
     // modified version of XHR script by PPK
     // http://www.quirksmode.org/js/xmlhttp.html
     // attached to qHint to allow substitution / mocking
-    qHint.sendRequest = function (url, callback) {
+    qHint.fetch = function (url, callback) {
         var req = createXMLHTTPObject();
         if (!req) {
             return;
@@ -85,4 +92,6 @@
         }
         req.send();
     };
+
+    window.jsHintTest = window.qHint = qHint;
 })();
