@@ -1,0 +1,35 @@
+{
+  "name": "qhint",
+  "version": "1.1.0",
+  "description": "Run jsHint validation along your tests",
+  "main": "qhint.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "qunitjs": "^1.15.0"
+  },
+  "devDependencies": {
+    "karma": "^0.12.24",
+    "karma-firefox-launcher": "^0.1.3",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-qunit": "^0.1.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gyoshev/qhint.git"
+  },
+  "keywords": [
+    "qunit",
+    "jshint"
+  ],
+  "author": "Alex Gyoshev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gyoshev/qhint/issues"
+  },
+  "homepage": "https://github.com/gyoshev/qhint"
+}

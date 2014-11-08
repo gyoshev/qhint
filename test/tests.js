@@ -105,9 +105,12 @@ test("validation does not change options object", function(assert) {
     assert.ok(options.unused);
 });
 
+
 module("Style");
 
-qHint("qHinting qHint", "../qhint.js", {
+var qHintSrc = document.querySelector("script[src*=qhint]").getAttribute("src");
+
+qHint("qHinting qHint", qHintSrc, {
     curly: true,
     trailing: true,
     latedef: true,
@@ -115,4 +118,3 @@ qHint("qHinting qHint", "../qhint.js", {
     browser: true,
     jquery: true
 });
-
