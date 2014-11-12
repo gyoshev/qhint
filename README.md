@@ -1,5 +1,7 @@
 # qHint - Integrating jsHint into qUnit
 
+[![Build Status](https://travis-ci.org/gyoshev/qhint.svg?branch=master)](https://travis-ci.org/gyoshev/qhint)
+
 This small script lets you integrate jsHint coding style validation into your qUnit unit tests. For more information, see the blog post [Enforcing coding conventions with jsHint and qUnit](http://blog.gyoshev.net/2011/04/enforcing-coding-conventions-with-jshint-and-qunit)
 
 ![JsHint in a QUnit suite](http://blog.gyoshev.net/images/2011/04/jshint-and-qunit.png)
